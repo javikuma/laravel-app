@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Response;
 
 class ProductController extends Controller
 {
@@ -13,7 +14,12 @@ class ProductController extends Controller
      */
     public function index()
     {
-        return Product::all();
+        $data = Product::all();
+
+        return [
+            'success' => true,
+            'data' => $data
+        ];
     }
 
     /**
@@ -27,7 +33,12 @@ class ProductController extends Controller
             'description' => 'required|string',
             'price' => 'required|numeric'
         ]);
-        return Product::create($request->all());
+        $dataCreated = Product::create($request->all());
+
+        return [
+            'success' => true,
+            'data' => $dataCreated
+        ];
     }
 
     /**
@@ -35,7 +46,19 @@ class ProductController extends Controller
      */
     public function show(string $id)
     {
-        return Product::find($id);
+        $data = Product::find($id);
+
+        if (!$data) {
+            return [
+                'success' => false,
+                'message' => 'Data not found'
+            ];
+        }
+
+        return [
+            'success' => true,
+            'data' => $data
+        ];
     }
 
     /**
@@ -44,8 +67,20 @@ class ProductController extends Controller
     public function update(Request $request, string $id)
     {
         $product = Product::find($id);
+
+        if (!$product) {
+            return [
+                'success' => false,
+                'message' => 'Data not found'
+            ];
+        }
+
+
         $product->update($request->all());
-        return $product;
+        return [
+            'success' => true,
+            'data' => $product
+        ];
     }
 
     /**
@@ -53,7 +88,19 @@ class ProductController extends Controller
      */
     public function destroy(string $id)
     {
-        return Product::destroy($id);
+        $data = Product::destroy($id);
+
+        if (!$data) {
+            return [
+                'success' => false,
+                'message' => 'Data not found'
+            ];
+        }
+
+        return [
+            'success' => true,
+            'data' => $data
+        ];
     }
 
     /**
@@ -61,6 +108,11 @@ class ProductController extends Controller
      */
     public function search(string $name)
     {
-        return Product::where('name', 'like', '%' . $name . '%')->get();
+        $data = Product::where('name', 'like', '%' . $name . '%')->get();
+
+        return [
+            'success' => true,
+            'data' => $data
+        ];
     }
 }
